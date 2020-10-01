@@ -24,7 +24,7 @@ Compatible with all TTGO camera products, written by LewisHe
 // #define T_Camera_V05_VERSION
 // #define T_Camera_V16_VERSION
 // #define T_Camera_V162_VERSION
-// #define T_Camera_V17_VERSION
+#define T_Camera_V17_VERSION
 // #define ESPRESSIF_ESP_EYE
 
 /***************************************
@@ -43,11 +43,19 @@ Compatible with all TTGO camera products, written by LewisHe
 /***************************************
  *  WiFi
  **************************************/
-#define WIFI_SSID   "YourSSID"
-#define WIFI_PASSWD "YourPASSWORD"
+#define WIFI_SSID   "FLYNNs"
+#define WIFI_PASSWD "Aa123456789"
 
+/* MQTT Client - Uncomment block */
+#define MQTT_BROKER "172.16.0.4"
+#define MQTT_PORT   1883
+#define MQTT_NAME   "TTGO-Cam"
+// #define MQTT_USER  "MQTT_USER"
+// #define MQTT_PASSWD  "MQTT_PASSWD"
+/* MQTT Client - End of block*/
 
 #include "select_pins.h"
+#include "mqtt_ha_client.h"
 
 #if defined(SOFTAP_MODE)
 #endif
@@ -437,6 +445,11 @@ void setupNetwork()
     ipAddress = WiFi.localIP().toString();
     macAddress += WiFi.macAddress().substring(0, 5);
 #endif
+
+#ifdef MQTT_BROKER
+    mqttReconnect();
+#endif
+
 #if defined(ENABLE_TFT)
 #if defined(T_Camera_PLUS_VERSION)
     tft.drawString("ipAddress:", tft.width() / 2, tft.height() / 2 + 50);
@@ -544,6 +557,8 @@ void setup()
     }
 
     setupButton();
+
+    setupMqtt();
 
     setupNetwork();
 
